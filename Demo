@@ -1,0 +1,318 @@
+#include <iostream>
+
+#include <cstring>
+
+using namespace std;
+
+函数itoa()第1种实现方式 //函数itoa()，5分
+
+void itoa(int n, char *s) //若已知n是168，则s中得到的值为"168"。要编写通用程序。
+
+{
+
+       if(n==0)
+
+       {
+
+              strcpy(s, "0");
+
+              return;
+
+       }
+
+      
+
+       char *begin = s;
+
+       while(n)
+
+       {
+
+              *s=n%10+'0';
+
+              n=n/10;
+
+              s++;
+
+       }
+
+       *s='\0';          //得 "861"
+
+ 
+
+       s--;
+
+       char *t=begin, ch;
+
+       while(t<s)              //逆置字符串
+
+       {
+
+              ch=*t; *t=*s; *s=ch;
+
+              t++;
+
+              s--;
+
+       }               //得 "168"
+
+}
+
+-----------------------------------------------------------------------------------------------
+
+函数itoa()第2种实现方式，不需要逆置字符串
+
+void itoa(int n, char *s)
+
+{
+
+       if(n==0)
+
+       {
+
+              strcpy(s, "0");
+
+              return;
+
+       }
+
+      
+
+       int i=0, t=n;  //暂存n的值到t中
+
+       while(n)  //循环求n的位数
+
+       {
+
+              n=n/10;
+
+              i++;
+
+       }
+
+       s[i]='\0';  //循环结束后，i是n的位数，它应该也是'\0'的位置
+
+ 
+
+       n=t;        //恢复n的值
+
+ 
+
+       for(i--; n>0; i--)
+
+       {
+
+              s[i]=n%10+'0'; //无需逆置，直接放到应该放置的位置
+
+              n=n/10;
+
+       }
+
+}
+
+----------------------------------------------------------------
+
+class Date // Date类，10分 // Date 类的定义
+
+{
+
+       int year, month, day;
+
+public:
+
+       Date(int y=0, int m=0, int d=0)
+
+       {
+
+              year=y; month=m; day=d;
+
+       }
+
+ 
+
+       void setDate(int y, int m, int d)
+
+       {
+
+              year=y; month=m; day=d;
+
+       }
+
+ 
+
+       void getDate(char *DateStr)
+
+       {
+
+              char temp[10];
+
+             
+
+              itoa(year, DateStr); //注意DateStr指向字符串的空间在主调函数中
+
+ 
+
+              itoa(month, temp);
+
+             strcat(DateStr, "/");
+
+              strcat(DateStr, temp);
+
+ 
+
+              itoa(day, temp);
+
+              strcat(DateStr, "/");
+
+              strcat(DateStr, temp);
+
+       }
+
+};
+
+ 
+
+class Time  // Time类，10分      // Time 类的定义
+
+{
+
+       int hour, minute, second;
+
+public:
+
+       Time(int h=0, int m=0, int s=0)
+
+       {
+
+              hour=h; minute=m; second=s;
+
+       }
+
+ 
+
+       void setTime(int h=0, int m=0, int s=0)
+
+       {
+
+              hour=h; minute=m; second=s;
+
+       }
+
+ 
+
+       void getTime(char *TimeStr)
+
+       {
+
+              char temp[10];
+
+ 
+
+              itoa(hour, TimeStr);  //注意TimeStr指向的字符串的空间在主调函数中
+
+ 
+
+              itoa(minute, temp);
+
+              strcat(TimeStr, ":");
+
+              strcat(TimeStr, temp);
+
+ 
+
+              itoa(second, temp);
+
+              strcat(TimeStr, ":");
+
+           strcat(TimeStr, temp);
+
+       }
+
+};
+
+ 
+
+class DateTime: public Date, public Time // DateTime类，10分
+
+{    
+
+public:
+
+       DateTime(int yy=0, int mm=0, int dd=0, int h=0, int m=0, int s=0): Date(yy,mm,dd), Time(h, m, s)
+
+       { }
+
+ 
+
+       void setDateTime(int yy, int mm, int dd, int h, int m, int s)
+
+       {
+
+              setDate(yy, mm, dd);
+
+              setTime(h, m, s);
+
+       }
+
+ 
+
+       void getDateTime(char *DTStr) //返回日期时间字符串
+
+       {
+
+              char temp[20];
+
+ 
+
+              getDate(DTStr);  //注意DTStr指向的字符串空间在主调函数中
+
+              getTime(temp);
+
+ 
+
+              strcat(DTStr, "  ");
+
+              strcat(DTStr, temp);
+
+       }
+
+};
+
+ 
+
+int main( ) //主函数，5分
+
+{    
+
+       char DTStr[80];
+
+       DateTime dt(2020, 5, 1, 21, 30, 10);
+
+      
+
+       dt.getDateTime(DTStr);    //注意字符串的空间在主调函数中
+
+       cout << DTStr << endl;
+
+      
+
+       dt.setDate(2020, 6, 1);
+
+       dt.setTime(10, 10, 10);
+
+       dt.getDateTime(DTStr);
+
+       cout << DTStr << endl;
+
+ 
+
+       dt.setDateTime(2020, 5, 12, 21, 35, 50);
+
+       dt.getDateTime(DTStr);
+
+       cout << DTStr << endl;
+
+       return 0;
+
+}
+
